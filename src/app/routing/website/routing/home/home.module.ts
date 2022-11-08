@@ -1,22 +1,23 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NotFoundPageComponent } from './pages/not-found-page/not-found-page.component';
+import { HomePageComponent } from './pages/home-page/home-page.component';
 import { RouterModule } from '@angular/router';
 
 
 
 @NgModule({
   declarations: [
-    NotFoundPageComponent
+    HomePageComponent
   ],
   imports: [
     CommonModule,
     RouterModule.forChild([
       {
-        path: '**',
-        component: NotFoundPageComponent,
-      }
+        path: '',
+        pathMatch: 'full',
+        component: HomePageComponent
+      },
     ])
   ]
 })
-export class NotFoundModule { }
+export class HomeModule { }
