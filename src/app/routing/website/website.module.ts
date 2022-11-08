@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common'
 import { RouterModule } from '@angular/router'
 import { AdminGuestGuard } from './guards/admin-guest.guard'
 import { AdminAuthGuard } from './guards/admin-auth.guard'
+//  Lazy load pages diagram:
+//  https://lucid.app/lucidchart/f96c8c3c-699b-46d8-8547-e18e11688ef2/edit?viewport_loc=-43%2C-304%2C1899%2C1049%2C0_0&invitationId=inv_7fdd3d2b-d0b7-44f9-a636-e7ca3cfd7b8b
 
 @NgModule({
   declarations: [],
