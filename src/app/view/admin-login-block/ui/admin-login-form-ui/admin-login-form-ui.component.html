@@ -23,7 +23,7 @@
   <button
     mat-raised-button
     color="primary"
-    [disabled]="formGroup.invalid || !! formError"
+    [disabled]="disabled || formGroup.invalid || !! formError"
   >Войти</button>
 
   <mat-error *ngIf="formError">{{ formError  }}</mat-error>

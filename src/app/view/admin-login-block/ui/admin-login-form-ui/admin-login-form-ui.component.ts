@@ -10,10 +10,10 @@ export class AdminLoginFormUiComponent implements OnInit {
 
   formGroup!: FormGroup
 
-  @Input()
-  formError = ''
-  @Output()
-  login = new EventEmitter()
+  @Input() formError: string | null = ''
+  @Input() disabled!: boolean | null
+
+  @Output() login = new EventEmitter()
 
   constructor() { }
 
@@ -23,6 +23,7 @@ export class AdminLoginFormUiComponent implements OnInit {
       login: new FormControl('', [Validators.required]),
       password: new FormControl('', [Validators.required]),
     })
+
   }
 
   onFormChange() {
