@@ -31,7 +31,6 @@ export class AdminLoginFormUiComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log('UI', this.formGroup.value)
     this.login.emit(this.formGroup.value)
   }
 

@@ -33,7 +33,7 @@ export const adminAuthReducer = createReducer(
     loading: false,
     serverError: '',
   })),
-  on(loginFailed, (state, {serverError}) => ({
+  on(loginFailed, (state, { serverError }) => ({
     ...state,
     authData: null,
     loaded: true,
