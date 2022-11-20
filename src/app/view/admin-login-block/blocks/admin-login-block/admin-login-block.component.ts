@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http'
 import { Component, OnInit } from '@angular/core'
 import { Store, select } from '@ngrx/store'
 import { Observable } from 'rxjs'
@@ -19,7 +20,10 @@ export class AdminLoginBlockComponent implements OnInit {
   loaded$: Observable<boolean> = this.store$.pipe(select(getLoaded))
   serverError$: Observable<string> = this.store$.pipe(select(getServerError))
 
-  constructor(private store$: Store) { }
+  constructor(
+    private store$: Store,
+    private httpClient: HttpClient,
+  ) { }
 
 
 
@@ -28,6 +32,11 @@ export class AdminLoginBlockComponent implements OnInit {
 
   onLogin(loginPayload: {login: string, password: string}) {
     this.store$.dispatch(login(loginPayload))
+  }
+
+  testProfile() {
+    this.httpClient.get('http://localhost:3000/auth/profile')
+    .subscribe(console.log)
   }
 
 }
