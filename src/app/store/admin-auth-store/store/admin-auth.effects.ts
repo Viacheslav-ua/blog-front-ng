@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core"
 import { Actions, createEffect, ofType } from "@ngrx/effects"
 import { select, Store } from "@ngrx/store"
-import { catchError, delay, delayWhen, filter, first, map, of, switchMap, tap, timer } from "rxjs"
+import { catchError, filter, first, fromEvent, map, of, switchMap, tap, timer } from "rxjs"
 import { AdminAuthService } from "../services/admin-auth.service"
-import { initAdminAuth, login, loginFailed, loginSuccess, logoutSuccess } from "./admin-auth.actions"
+import { initAdminAuth, login, loginFailed, loginSuccess, logoutSuccess, extractLoginData } from "./admin-auth.actions"
 import { AuthData } from "./admin-auth.reducer"
 import { isAuth } from "./admin-auth.selectors"
 
@@ -28,7 +28,7 @@ export class AdminAuthEffects {
 
   refresh$ = createEffect(() => this.actions$.pipe(
     ofType(loginSuccess),
-    delayWhen((action: AuthData) => timer(
+    switchMap((action: AuthData) => timer(
       action.exp*1000 - 60*1000 - Date.now()
     )),
     switchMap(() => this.store.pipe(
@@ -50,7 +50,7 @@ export class AdminAuthEffects {
   ), { dispatch: false })
 
   extractLoginData$ = createEffect(() => this.actions$.pipe(
-    ofType(initAdminAuth),
+    ofType(initAdminAuth, extractLoginData),
     map(() => {
       const authDataString = localStorage.getItem('authData')
       if (!authDataString) {
@@ -64,6 +64,12 @@ export class AdminAuthEffects {
 
       return loginSuccess(authData)
     })
+  ))
+
+  listenStorageEffect$ = createEffect(() => this.actions$.pipe(
+    ofType(initAdminAuth),
+    switchMap(() => fromEvent(window, 'storage')),
+    map(() => extractLoginData()),
   ))
 
   constructor(
