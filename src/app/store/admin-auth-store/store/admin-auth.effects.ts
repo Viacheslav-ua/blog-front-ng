@@ -16,7 +16,7 @@ export class AdminAuthEffects {
       login: action.login,
       password: action.password,
     }).pipe(
-      map(loginSuccessData => loginSuccess(loginSuccessData)),
+      map((authData: AuthData) => loginSuccess({authData})),
       catchError(
         error => (of(loginFailed({
           serverError: error.message,
@@ -28,8 +28,8 @@ export class AdminAuthEffects {
 
   refresh$ = createEffect(() => this.actions$.pipe(
     ofType(loginSuccess),
-    switchMap((action: AuthData) => timer(
-      action.exp*1000 - 60*1000 - Date.now()
+    switchMap((action) => timer(
+      action.authData.exp*1000 - 60*1000 - Date.now()
     )),
     switchMap(() => this.store.pipe(
       select(isAuth),
@@ -37,14 +37,13 @@ export class AdminAuthEffects {
       filter(isAdminAuth => isAdminAuth),
     )),
     switchMap(() => this.adminAuthService.refresh()),
-    map((loginSuccessData: AuthData) => loginSuccess(loginSuccessData)),
+    map(authData => loginSuccess({authData})),
     )
   )
 
   saveAuthDataToLocalStorage$ = createEffect(() => this.actions$.pipe(
     ofType(loginSuccess),
-    tap(loginSuccessData => {
-      const { type, ...authData } = loginSuccessData
+    tap(({ authData }) => {
       localStorage.setItem('authData', JSON.stringify(authData))
     })
   ), { dispatch: false })
@@ -62,7 +61,7 @@ export class AdminAuthEffects {
         return logoutSuccess()
       }
 
-      return loginSuccess(authData)
+      return loginSuccess({ authData })
     })
   ))
 
