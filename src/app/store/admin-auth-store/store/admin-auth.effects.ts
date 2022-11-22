@@ -1,7 +1,8 @@
 import { Injectable } from "@angular/core"
+import { Router } from "@angular/router"
 import { Actions, createEffect, ofType } from "@ngrx/effects"
 import { select, Store } from "@ngrx/store"
-import { catchError, filter, first, fromEvent, map, of, switchMap, tap, timer } from "rxjs"
+import { catchError, distinctUntilChanged, filter, first, fromEvent, map, of, skip, switchMap, tap, timer } from "rxjs"
 import { AdminAuthService } from "../services/admin-auth.service"
 import { initAdminAuth, login, loginFailed, loginSuccess, logoutSuccess, extractLoginData } from "./admin-auth.actions"
 import { AuthData } from "./admin-auth.reducer"
@@ -31,7 +32,7 @@ export class AdminAuthEffects {
     switchMap((action) => timer(
       action.authData.exp*1000 - 60*1000 - Date.now()
     )),
-    switchMap(() => this.store.pipe(
+    switchMap(() => this.store$.pipe(
       select(isAuth),
       first(),
       filter(isAdminAuth => isAdminAuth),
@@ -71,10 +72,25 @@ export class AdminAuthEffects {
     map(() => extractLoginData()),
   ))
 
+  listenAuthorizeEffect$ = createEffect(() => this.actions$.pipe(
+    ofType(initAdminAuth),
+    switchMap(() => this.adminAuthService.isAuth$),
+    distinctUntilChanged(),
+    skip(1),
+    tap(isAuthorized => {
+      this.router.navigateByUrl(
+        isAuthorized ? '/admin' : '/admin/auth/login'
+      )
+    })
+
+
+  ), {dispatch: false})
+
   constructor(
     private actions$: Actions,
     private adminAuthService: AdminAuthService,
-    private store: Store,
+    private store$: Store,
+    private router: Router,
   ) { }
 
 
