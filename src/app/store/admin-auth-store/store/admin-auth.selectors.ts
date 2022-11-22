@@ -15,6 +15,11 @@ export const getServerError = createSelector(
   getFeature,
   state => state.serverError,
 )
+export const isAuthData = createSelector(
+  getFeature,
+  state => state.loadAuthData && !!state.authData,
+
+)
 export const getAuthData = createSelector(
   getFeature,
   state => state.authData,
